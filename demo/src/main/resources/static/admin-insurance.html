@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin | Insurance Approval</title>
+
+  <style>
+    body {
+        background: linear-gradient(135deg, #141e30, #243b55);
+        font-family: "Segoe UI", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        background: #fff;
+        width: 95%;
+        max-width: 1000px;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    h2 {
+        text-align: center;
+        color: #243b55;
+        margin-bottom: 15px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+    }
+
+    th {
+        background: #f1f1f1;
+    }
+
+    button {
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .approve {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .reject {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .empty {
+        text-align: center;
+        color: #777;
+        padding: 20px;
+    }
+    .back-btn {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.back-btn:hover {
+    text-decoration: underline;
+}
+
+  </style>
+</head>
+
+<body>
+<button class="back-btn" onclick="goBack()">← Back</button>
+
+<div class="container">
+  <h2>Pending Insurance Applications</h2>
+
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>User</th>
+      <th>Insurance Type</th>
+      <th>Amount</th>
+      <th>Applied Date</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
+
+<script>
+  const API_URL = "http://localhost:8081";
+
+  async function loadPending() {
+
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+
+      try {
+          const res = await fetch(`${API_URL}/admin/insurance/pending`);
+          const data = await res.json();
+
+          if (data.length === 0) {
+              tbody.innerHTML = `
+                  <tr><td colspan="6" class="empty">
+                      No pending insurance requests
+                  </td></tr>`;
+              return;
+          }
+
+          data.forEach(i => {
+              tbody.innerHTML += `
+                  <tr id="row-${i.id}">
+                      <td>${i.id}</td>
+                      <td>${i.user.username}</td>
+                      <td>${i.insuranceType}</td>
+                      <td>₹${i.amount}</td>
+                      <td>${i.appliedDate}</td>
+                      <td>
+                          <button class="approve" onclick="updateStatus(${i.id}, 'APPROVED')">Approve</button>
+                          <button class="reject" onclick="updateStatus(${i.id}, 'REJECTED')">Reject</button>
+                      </td>
+                  </tr>
+              `;
+          });
+
+      } catch (err) {
+          console.error(err);
+      }
+  }
+
+  async function updateStatus(id, status) {
+      try {
+          await fetch(`${API_URL}/admin/insurance/update/${id}/${status}`, {
+              method: "PUT"
+          });
+
+          // remove row instantly
+          document.getElementById(`row-${id}`).remove();
+
+      } catch (err) {
+          alert("Failed to update status");
+          console.error(err);
+      }
+  }
+
+  loadPending();
+  function goBack() {
+    window.location.href = "admin.html";
+
+}
+
+</script>
+
+</body>
+</html>

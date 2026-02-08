@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Insurance | VBS</title>
+
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+        background: linear-gradient(135deg, #764ba2, #d266ea);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    /* 🔙 Back Button (Top Left - Outside Card) */
+    .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 14px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .back-btn:hover {
+        text-decoration: underline;
+    }
+
+    .container {
+        background: #fff;
+        width: 90%;
+        max-width: 800px;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    h2 {
+        text-align: center;
+        color: #7e3480;
+        margin-bottom: 15px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    th {
+        background: #f3f3f3;
+    }
+
+    .status {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .approved {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .empty {
+        text-align: center;
+        color: #777;
+        padding: 20px;
+        font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- 🔙 Back Button -->
+<button class="back-btn" onclick="goBack()">← Back</button>
+
+<div class="container">
+  <h2>My Insurance Applications</h2>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Insurance Type</th>
+      <th>Amount</th>
+      <th>Applied Date</th>
+      <th>Status</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
+
+<script>
+  const API_URL = "http://localhost:8081";
+  const userId = localStorage.getItem("userId");
+
+  async function loadInsurance() {
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+
+      if (!userId) {
+          tbody.innerHTML = `
+              <tr>
+                  <td colspan="4" class="empty">
+                      User not logged in
+                  </td>
+              </tr>`;
+          return;
+      }
+
+      try {
+          const res = await fetch(`${API_URL}/insurance/my/${userId}`);
+
+          if (!res.ok) throw new Error("Fetch failed");
+
+          const data = await res.json();
+
+          if (data.length === 0) {
+              tbody.innerHTML = `
+                  <tr>
+                      <td colspan="4" class="empty">
+                          No insurance applications found.
+                      </td>
+                  </tr>`;
+              return;
+          }
+
+          data.forEach(i => {
+              tbody.innerHTML += `
+                  <tr>
+                      <td>${i.insuranceType}</td>
+                      <td>₹${i.amount}</td>
+                      <td>${i.appliedDate}</td>
+                      <td>
+                          <span class="status ${i.status.toLowerCase()}">
+                              ${i.status}
+                          </span>
+                      </td>
+                  </tr>`;
+          });
+
+      } catch (err) {
+          console.error(err);
+          tbody.innerHTML = `
+              <tr>
+                  <td colspan="4" class="empty">
+                      Failed to load insurance data
+                  </td>
+              </tr>`;
+      }
+  }
+
+  function goBack() {
+      window.location.href = "dashboard.html";
+  }
+
+  loadInsurance();
+</script>
+
+</body>
+</html>

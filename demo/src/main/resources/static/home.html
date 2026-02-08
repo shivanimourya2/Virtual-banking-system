@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VBS - Virtual Banking System</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #8359be, #a02d8b);
+        }
+
+        /* MAIN WHITE CARD */
+        .main-card{
+            width:420px;              /* 🔹 size bada kiya */
+            background:#ffffff;
+            border-radius:18px;
+            box-shadow:0 25px 60px rgba(0,0,0,0.25);
+            overflow:hidden;          /* header clean rahe */
+        }
+
+        /* TOP HEADER CARD */
+        .header{
+            background: linear-gradient(135deg, #8359be, #a02d8b); /* 🔹 background added */
+            padding:25px;
+            text-align:center;
+            color:#ffffff;
+        }
+
+        .header h1{
+            font-size:30px;
+            margin-bottom:4px;
+        }
+
+        .header p{
+            font-size:13px;
+            opacity:0.9;
+        }
+
+        /* CONTENT */
+        .content{
+            padding:30px 25px 35px;
+            text-align:center;
+        }
+
+        .content h2{
+            font-size:22px;
+            margin-bottom:10px;
+        }
+
+        .content .desc{
+            font-size:14px;
+            color:#666;
+            line-height:1.5;
+            margin-bottom:25px;
+        }
+
+        /* FEATURES */
+        .features{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:16px;
+            margin-bottom:30px;
+        }
+
+        .feature{
+            background:#f4f4f4;
+            padding:16px 10px;
+            border-radius:12px;
+            font-size:13px;
+        }
+
+        .feature span{
+            display:block;
+            font-size:22px;
+            margin-bottom:6px;
+        }
+
+        /* BUTTONS */
+        .btn-group{
+            display:flex;
+            gap:14px;
+        }
+
+        .btn{
+            flex:1;
+            padding:13px;
+            border:none;
+            border-radius:8px;
+            font-size:15px;
+            font-weight:600;
+            cursor:pointer;
+        }
+
+        .btn-login{
+            background: linear-gradient(135deg, #8359be, #a02d8b);
+            color:#ffffff;
+        }
+
+        .btn-signup{
+            background:#eeeeee;
+            color:#333;
+        }
+
+        .btn-login:hover{
+            opacity:0.9;
+        }
+
+        .btn-signup:hover{
+            background:#dddddd;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="main-card">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>VBS</h1>
+        <p>Virtual Banking System</p>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+        <h2>Welcome to VBS</h2>
+        <p class="desc">
+            Securely manage your money, track expenses,
+            and perform transactions — all in one place.
+        </p>
+
+        <!-- FEATURES -->
+        <div class="features">
+            <div class="feature">
+                <span>💳</span>
+                Easy Transactions
+            </div>
+            <div class="feature">
+                <span>🔒</span>
+                Secure Banking
+            </div>
+            <div class="feature">
+                <span>📊</span>
+                Track Expenses
+            </div>
+            <div class="feature">
+                <span>⚡</span>
+                Fast Access
+            </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="btn-group">
+            <button class="btn btn-login" onclick="location.href='login.html'">
+                Login
+            </button>
+            <button class="btn btn-signup" onclick="location.href='signup.html'">
+                Sign Up
+            </button>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Apply for Insurance | VBS</title>
+
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #d266ea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .insurance-card {
+        background: #ffffffd0;
+        width: 420px;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        position: relative;
+    }
+
+    .insurance-card h2 {
+        text-align: center;
+        color: #e0008e;
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    select, input {
+        width: 100%;
+        margin-top: 5px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    .desc-text {
+        font-size: 12px;
+        color: #555;
+        margin-top: 5px;
+    }
+
+    small {
+        font-size: 11px;
+        color: #888;
+    }
+
+    .apply-btn {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #d266ea 0%, #7e3480 100%);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        cursor: pointer;
+        margin-top: 12px;
+    }
+
+    .apply-btn:hover {
+        opacity: 0.9;
+    }
+
+    #msgBox {
+        text-align: center;
+        margin-top: 12px;
+        font-size: 13px;
+    }
+    .back-btn {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.back-btn:hover {
+    text-decoration: underline;
+}
+
+  </style>
+</head>
+
+<body>
+<button class="back-btn" onclick="goBack()">← Back</button>
+
+
+<div class="insurance-card">
+
+
+  <h2>Apply for Insurance</h2>
+  <p class="subtitle">Choose the insurance that suits you best</p>
+
+  <!-- Insurance Type -->
+  <div class="form-group">
+    <label>Insurance Type</label>
+    <select id="insuranceType">
+      <option value="">-- Select Insurance Type --</option>
+      <option value="life">Life Insurance</option>
+      <option value="health">Health Insurance</option>
+      <option value="vehicle">Vehicle Insurance</option>
+    </select>
+    <p id="insuranceDesc" class="desc-text"></p>
+  </div>
+
+  <!-- Amount -->
+  <div class="form-group">
+    <label>Coverage Amount (₹)</label>
+    <input type="number" id="amount" placeholder="Enter amount" min="50000">
+    <small>Final premium will be calculated after admin approval</small>
+  </div>
+
+  <!-- Buttons -->
+  <button class="apply-btn" onclick="applyInsurance()">Apply for Insurance</button>
+  <button class="apply-btn" onclick="goToMyInsurance()">View My Insurance</button>
+
+  <!-- Message -->
+  <div id="msgBox"></div>
+
+</div>
+
+<script>
+ const API_URL = "http://localhost:8081";
+
+ const insuranceTypeEl = document.getElementById("insuranceType");
+ const amountEl = document.getElementById("amount");
+ const descEl = document.getElementById("insuranceDesc");
+ const msgBox = document.getElementById("msgBox");
+
+ const insuranceDescriptions = {
+   life: "Provides financial security to your family.",
+   health: "Covers medical and hospitalization expenses.",
+   vehicle: "Protects against vehicle damage and accidents."
+ };
+
+ // description change
+ insuranceTypeEl.addEventListener("change", () => {
+   descEl.innerText = insuranceDescriptions[insuranceTypeEl.value] || "";
+ });
+
+ async function applyInsurance() {
+   const type = insuranceTypeEl.value;
+   const amount = Number(amountEl.value);
+   const userId = localStorage.getItem("userId");
+
+   if (!type || !amount) {
+     showMessage("Please fill all fields.", "red");
+     return;
+   }
+
+   if (amount < 50000) {
+     showMessage("Minimum coverage amount is ₹50,000.", "red");
+     return;
+   }
+
+   if (!userId) {
+     showMessage("User not logged in.", "red");
+     return;
+   }
+
+   try {
+     const response = await fetch(
+       `${API_URL}/insurance/apply/${userId}`,
+       {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({
+           insuranceType: type,
+           amount: amount
+         })
+       }
+     );
+
+     if (!response.ok) {
+       throw new Error("Apply failed");
+     }
+
+     const result = await response.text();
+     showMessage(result + " (Status: PENDING)", "green");
+
+     insuranceTypeEl.value = "";
+     amountEl.value = "";
+     descEl.innerText = "";
+
+   } catch (error) {
+     console.error(error);
+     showMessage("Something went wrong. Try again.", "red");
+   }
+ }
+
+ function goToMyInsurance() {
+   window.location.href = "my-insurance.html";
+ }
+ function goBack() {
+    window.location.href = "dashboard.html";
+}
+
+
+ function showMessage(message, color) {
+   msgBox.style.color = color;
+   msgBox.innerText = message;
+ }
+
+
+</script>
+
+</body>
+</html>
